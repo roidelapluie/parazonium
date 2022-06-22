@@ -1,14 +1,16 @@
-package main
+package parazonium
 
 import (
-	"dagger.io/dagger"
-
 	"dagger.io/dagger/core"
 	"universe.dagger.io/docker"
 )
 
 _builder: docker.#Pull & {
     source: "quay.io/prometheus/golang-builder:1.18-base"
+}
+
+_src: core.#Source & {
+    path: "."
 }
 
 #build: docker.#Run & {
@@ -26,7 +28,7 @@ _builder: docker.#Pull & {
 	mounts: {
 		"app": {
 			"dest":     "/app"
-			"contents": source.output
+			"contents": _src.output
 		}
 		"go mod cache": {
 			contents: core.#CacheDir & {
